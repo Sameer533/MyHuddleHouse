@@ -1,38 +1,79 @@
-.App {
+/* General container styling */
+.app-container {
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+h1 {
   text-align: center;
+  color: #C8102E; /* Match Huddle House red */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Announcements Section */
+.announcements-section {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.announcements-section h2 {
+  color: #C8102E;
+}
+
+.announcements-section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.announcements-section li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Schedule Section */
+.schedule-section {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-section h2 {
+  color: #C8102E;
+}
+
+.schedule-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Zoomed class for enlarging the image */
+.zoomed {
+  transform: scale(1.5); /* Zoom in on the image */
+}
+
+/* Responsive styling for App */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 10px;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  
+  .schedule-section, .announcements-section {
+    padding: 15px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .schedule-image {
+    width: 100%;
   }
 }
