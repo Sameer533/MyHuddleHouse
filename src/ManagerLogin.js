@@ -8,7 +8,7 @@ const ManagerLogin = ({ onLogin }) => {
   const handlePinChange = (e) => setPin(e.target.value);
 
   const handleLogin = () => {
-    const managerPin = "1234"; // Replace with the desired PIN
+    const managerPin = "avinash143"; // Replace with the desired PIN
     if (pin === managerPin) {
       onLogin(); // Call the onLogin prop to show the dashboard
     } else {

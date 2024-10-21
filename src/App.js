@@ -49,7 +49,7 @@ const App = () => {
     <div>
       <Navbar />
       <div className="app-container">
-        <h1>Welcome!</h1>
+        <h1>Welcome To Work !</h1>
 
         {/* Announcements Section */}
         <div className="announcements-section">
