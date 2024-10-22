@@ -37,6 +37,7 @@ const CookDashboard = () => {
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
   };
 
+  // Handle file change
   const handleFileChange = (index, file) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -50,8 +51,17 @@ const CookDashboard = () => {
     }
   };
 
+  // Check if all tasks have images uploaded
+  const allTasksHaveImages = tasks.every((task) => task.image !== null);
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!allTasksHaveImages) {
+      alert('Please upload images for all tasks before submitting.');
+      return;
+    }
+
     setLoading(true);
     const today = new Date().toISOString().split('T')[0];
 
@@ -122,7 +132,7 @@ const CookDashboard = () => {
           />
         </div>
 
-        <button type="submit" className="submit-button" disabled={loading}>
+        <button type="submit" className="submit-button" disabled={loading || !allTasksHaveImages}>
           {loading ? 'Submitting...' : 'Submit Checklist'}
         </button>
       </form>
