@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db, storage } from './firebase'; // Import Firebase
 import { setDoc, doc } from 'firebase/firestore'; // Firestore functions
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Storage functions
@@ -8,10 +8,10 @@ import Navbar from './Navbar';
 
 const CookDashboard = () => {
   const navigate = useNavigate();
-  const [signature, setSignature] = useState(''); // To store cook's signature
+  const [signature, setSignature] = useState('');
   const [tasks, setTasks] = useState([
     { name: 'STOCK – Sandwich board, Meat Drawers', image: null, icon: '📦' },
-    { name: 'STOCK – Back Cooler', image: null, icon: '📦' }, 
+    { name: 'STOCK – Back Cooler', image: null, icon: '📦' },
     { name: 'STOCK – Front Cooler', image: null, icon: '📦' },
     { name: 'STOCK BREAD', image: null, icon: '🍞' },
     { name: 'STOCK EGGS', image: null, icon: '🍽️' },
@@ -26,43 +26,52 @@ const CookDashboard = () => {
     { name: 'BRICK GRILL', image: null, icon: '🔥' },
     { name: 'TRASH', image: null, icon: '🗑️' },
   ]);
-
   const [loading, setLoading] = useState(false);
 
-  // Handle image selection for each task
-  const handleFileChange = (index, file) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].image = file;
-    setTasks(updatedTasks);
+  useEffect(() => {
+    const cachedTasks = JSON.parse(localStorage.getItem('tasks')) || tasks;
+    setTasks(cachedTasks);
+  }, []);
+
+  const saveToLocalStorage = (updatedTasks) => {
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
   };
 
-  // Handle form submission
+  const handleFileChange = (index, file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const updatedTasks = [...tasks];
+      updatedTasks[index].image = reader.result;
+      setTasks(updatedTasks);
+      saveToLocalStorage(updatedTasks);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     const today = new Date().toISOString().split('T')[0];
 
-    // Process each task and upload image to Firebase Storage
     const taskPromises = tasks.map(async (task, index) => {
       if (!task.image) return null;
 
-      // Create a unique file name using task index and current timestamp
+      const blob = await (await fetch(task.image)).blob();
       const uniqueFileName = `task_${index + 1}_${Date.now()}.jpg`;
       const storageRef = ref(storage, `checklistPhotos/${today}/${uniqueFileName}`);
 
-      const uploadTask = await uploadBytesResumable(storageRef, task.image);
+      const uploadTask = await uploadBytesResumable(storageRef, blob);
       const downloadURL = await getDownloadURL(uploadTask.ref);
 
-      return { name: task.name, photoURL: downloadURL }; // Return the task with its photo URL
+      return { name: task.name, photoURL: downloadURL };
     });
 
     try {
-      const taskResults = await Promise.all(taskPromises); // Wait for all tasks to be uploaded
-
-      // Filter out any tasks that didn't have images uploaded
+      const taskResults = await Promise.all(taskPromises);
       const completedTasks = taskResults.filter(Boolean);
 
-      // Save checklist and tasks to Firestore
       const checklistData = {
         role: 'cook',
         tasks: completedTasks,
@@ -70,12 +79,12 @@ const CookDashboard = () => {
         date: today
       };
 
-      // Save the checklist with a unique ID in Firestore
       await setDoc(doc(db, 'dailyChecklists', `cook_${today}_${Date.now()}`), checklistData);
 
       setLoading(false);
       alert('Work submitted successfully!');
-      navigate('/'); // Redirect to home dashboard after successful submission
+      localStorage.removeItem('tasks');
+      navigate('/');
     } catch (error) {
       console.error('Error submitting the checklist: ', error);
       setLoading(false);
@@ -85,7 +94,7 @@ const CookDashboard = () => {
 
   return (
     <div className="cook-dashboard">
-       <Navbar/>
+      <Navbar />
       <h1>Cook Daily Checklist</h1>
       <form onSubmit={handleSubmit}>
         {tasks.map((task, index) => (
@@ -96,13 +105,15 @@ const CookDashboard = () => {
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange(index, e.target.files[0])}
-              required
             />
+            {task.image && (
+              <img src={task.image} alt={`Preview ${index}`} className="preview-image" />
+            )}
           </div>
         ))}
 
         <div className="signature-field">
-          <label>Signature & Shift  : </label>
+          <label>Signature & Shift:</label>
           <input
             type="text"
             value={signature}

@@ -27,7 +27,15 @@
     font-size: 24px; /* Larger icon size */
     margin-right: 10px; /* Space between icon and text */
   }
-  
+  /* Add this to your CookDashboard.css file */
+.preview-image {
+  width: 150px; /* Set the desired width */
+  height: 150px; /* Set the desired height */
+  object-fit: contain; /* Ensure the image maintains its aspect ratio */
+  border: 1px solid #ddd;
+  margin-top: 10px;
+}
+
   input[type="file"] {
     margin-left: auto; /* Push file input to the right */
   }
