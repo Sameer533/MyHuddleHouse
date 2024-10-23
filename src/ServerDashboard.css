@@ -22,6 +22,13 @@
     margin: 10px 0; /* Space between cards */
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for cards */
   }
+  .preview-image {
+    width: 150px; /* Set the desired width */
+    height: 150px; /* Set the desired height */
+    object-fit: contain; /* Ensure the image maintains its aspect ratio */
+    border: 1px solid #ddd;
+    margin-top: 10px;
+  }
   
   .task-icon {
     font-size: 24px; /* Larger icon size */

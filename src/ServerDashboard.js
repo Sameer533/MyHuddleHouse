@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db, storage } from './firebase'; // Import Firebase
 import { setDoc, doc } from 'firebase/firestore'; // Firestore functions
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Storage functions
@@ -8,7 +8,7 @@ import Navbar from './Navbar';
 
 const ServerDashboard = () => {
   const navigate = useNavigate();
-  const [signature, setSignature] = useState(''); // To store server's signature
+  const [signature, setSignature] = useState('');
   const [tasks, setTasks] = useState([
     { name: 'STOCK CONDIMENTS STAND & JELLY CADDIES', image: null, icon: '📦' },
     { name: 'STOCK TOGO CUPS/LIDS/BAGS/ETC', image: null, icon: '🧴' },
@@ -23,43 +23,62 @@ const ServerDashboard = () => {
     { name: 'SWEEP & MOP FRONT HOUSE', image: null, icon: '🧹' },
     { name: 'EMPTY ALL TRASH CANS', image: null, icon: '🗑️' },
   ]);
-
   const [loading, setLoading] = useState(false);
 
-  // Handle image selection for each task
-  const handleFileChange = (index, file) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].image = file;
-    setTasks(updatedTasks);
+  useEffect(() => {
+    const cachedTasks = JSON.parse(localStorage.getItem('serverTasks')) || tasks;
+    setTasks(cachedTasks);
+  }, []);
+
+  const saveToLocalStorage = (updatedTasks) => {
+    localStorage.setItem('serverTasks', JSON.stringify(updatedTasks));
   };
+
+  // Handle file change
+  const handleFileChange = (index, file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const updatedTasks = [...tasks];
+      updatedTasks[index].image = reader.result;
+      setTasks(updatedTasks);
+      saveToLocalStorage(updatedTasks);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Check if all tasks have images uploaded
+  const allTasksHaveImages = tasks.every((task) => task.image !== null);
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!allTasksHaveImages) {
+      alert('Please upload images for all tasks before submitting.');
+      return;
+    }
+
     setLoading(true);
     const today = new Date().toISOString().split('T')[0];
 
-    // Process each task and upload image to Firebase Storage
     const taskPromises = tasks.map(async (task, index) => {
       if (!task.image) return null;
 
-      // Create a unique file name using task index and current timestamp
+      const blob = await (await fetch(task.image)).blob();
       const uniqueFileName = `task_${index + 1}_${Date.now()}.jpg`;
-      const storageRef = ref(storage, `serverPhotos/${today}/${uniqueFileName}`);
+      const storageRef = ref(storage, `serverChecklistPhotos/${today}/${uniqueFileName}`);
 
-      const uploadTask = await uploadBytesResumable(storageRef, task.image);
+      const uploadTask = await uploadBytesResumable(storageRef, blob);
       const downloadURL = await getDownloadURL(uploadTask.ref);
 
-      return { name: task.name, photoURL: downloadURL }; // Return the task with its photo URL
+      return { name: task.name, photoURL: downloadURL };
     });
 
     try {
-      const taskResults = await Promise.all(taskPromises); // Wait for all tasks to be uploaded
-
-      // Filter out any tasks that didn't have images uploaded
+      const taskResults = await Promise.all(taskPromises);
       const completedTasks = taskResults.filter(Boolean);
 
-      // Save checklist and tasks to Firestore
       const checklistData = {
         role: 'server',
         tasks: completedTasks,
@@ -67,12 +86,12 @@ const ServerDashboard = () => {
         date: today
       };
 
-      // Save the checklist with a unique ID in Firestore
       await setDoc(doc(db, 'dailyChecklists', `server_${today}_${Date.now()}`), checklistData);
 
       setLoading(false);
       alert('Work submitted successfully!');
-      navigate('/'); // Redirect to home dashboard after successful submission
+      localStorage.removeItem('serverTasks');
+      navigate('/');
     } catch (error) {
       console.error('Error submitting the checklist: ', error);
       setLoading(false);
@@ -82,7 +101,7 @@ const ServerDashboard = () => {
 
   return (
     <div className="server-dashboard">
-      <Navbar/>
+      <Navbar />
       <h1>Server Daily Checklist</h1>
       <form onSubmit={handleSubmit}>
         {tasks.map((task, index) => (
@@ -93,13 +112,15 @@ const ServerDashboard = () => {
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange(index, e.target.files[0])}
-              required
             />
+            {task.image && (
+              <img src={task.image} alt={`Preview ${index}`} className="preview-image" />
+            )}
           </div>
         ))}
 
         <div className="signature-field">
-          <label>Signature & Shift: </label>
+          <label>Signature & Shift:</label>
           <input
             type="text"
             value={signature}
@@ -108,7 +129,7 @@ const ServerDashboard = () => {
           />
         </div>
 
-        <button type="submit" className="submit-button" disabled={loading}>
+        <button type="submit" className="submit-button" disabled={loading || !allTasksHaveImages}>
           {loading ? 'Submitting...' : 'Submit Checklist'}
         </button>
       </form>
