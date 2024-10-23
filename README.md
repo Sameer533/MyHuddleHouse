@@ -1,71 +1,42 @@
-# Getting Started with Create React App
+# MyHuddlehouse
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Deploy](https://img.shields.io/badge/deployed-vercel-green.svg)](https://my-huddle-house.vercel.app/)
 
-## Available Scripts
+MyHuddlehouse is a task management app designed for the restaurant chain under Royal Seven Corporation. The app features:
 
-In the project directory, you can run:
+- Distinct dashboards for servers, cooks, and managers.
+- Task verification with image uploads.
+- Firebase integration for cloud data storage.
+- Local storage fallback for smooth UX on restaurant tablets.
+- Real-time updates for manager announcements and reminders.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Server Dashboard**: Task list for servers with photo uploads.
+- **Cook Dashboard**: Tasks with image verification.
+- **Manager Dashboard**: Oversee task completion and manage announcements.
+- **Firebase Integration**: Data and images are securely stored in the cloud.
+- **Local Storage Fallback**: Ensures functionality even with intermittent internet access.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Deployed Project
 
-### `npm test`
+[Check out the live app here!](https://my-huddle-house.vercel.app/)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Screenshots
+![Server Dashboard](https://link-to-image-server-dashboard.png)
+![Cook Dashboard](https://link-to-image-cook-dashboard.png)
+![Manager Dashboard](https://link-to-image-manager-dashboard.png)
 
-### `npm run build`
+## Technologies Used
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- React.js
+- Firebase (Firestore and Storage)
+- Vercel for deployment
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## How to Run Locally
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clone the repository.
+2. Run `npm install` to install dependencies.
+3. Set up Firebase configuration.
+4. Run `npm start` to launch the app.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-"# MyHuddleHouse" 
